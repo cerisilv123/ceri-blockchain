@@ -1,7 +1,7 @@
 package blockchain
 
 type Transaction struct {
-	sender    string
-	recipient string
-	amount    int
+	Sender    string
+	Recipient string
+	Amount    int
 }

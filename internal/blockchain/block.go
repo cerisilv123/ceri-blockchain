@@ -5,9 +5,9 @@ import (
 )
 
 type Block struct {
-	index        int
+	Index        int
 	Timestamp    time.Time
 	Transaction  Transaction
-	proof        int
-	previousHash string
+	Proof        int
+	PreviousHash string
 }
