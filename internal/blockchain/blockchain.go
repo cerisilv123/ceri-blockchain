@@ -1,7 +1,7 @@
 package blockchain
 
 import (
-	"fmt"
+	"time"
 )
 
 type Blockchain struct {
@@ -9,7 +9,7 @@ type Blockchain struct {
 	CurrentTransactions []Transaction
 }
 
-func (b *Blockchain) NewTransaction(sender string, recipient string, amount int) int {
+func (b *Blockchain) AddTransaction(sender string, recipient string, amount int) int {
 	transaction := Transaction{
 		Sender:    sender,
 		Recipient: recipient,
@@ -17,8 +17,23 @@ func (b *Blockchain) NewTransaction(sender string, recipient string, amount int)
 	}
 
 	b.CurrentTransactions = append(b.CurrentTransactions, transaction)
-	fmt.Printf("Current Transactions: %v\n", b.CurrentTransactions) // Remove this when not testing
 
 	var newBlock int = len(b.Chain)
 	return newBlock
+}
+
+func (b *Blockchain) AddBlock(proof int, previousHash string) Block {
+
+	block := Block{
+		Index:        len(b.Chain) + 1,
+		Timestamp:    time.Now(),
+		Transactions: b.CurrentTransactions,
+		Proof:        proof,
+		PreviousHash: previousHash,
+	}
+
+	b.CurrentTransactions = []Transaction{} // Emptying current transactions
+
+	b.Chain = append(b.Chain, block)
+	return block
 }
