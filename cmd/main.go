@@ -7,12 +7,7 @@ import (
 
 func main() {
 	// Create an instance of the Blockchain struct
-	chain := []blockchain.Block{}
-	transactions := []blockchain.Transaction{}
-	blockchain := blockchain.Blockchain{
-		Chain:               chain,
-		CurrentTransactions: transactions,
-	}
+	blockchain := blockchain.NewBlockchain()
 
 	// Call the newTransaction function
 	sender := "Alice"
