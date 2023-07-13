@@ -12,7 +12,6 @@ type Blockchain struct {
 	CurrentTransactions []Transaction
 }
 
-// NewBlockchain is a factory function that creates a new instance of the Blockchain struct.
 func NewBlockchain() *Blockchain {
 	blockchain := &Blockchain{
 		Chain:               []Block{},
