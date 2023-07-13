@@ -27,7 +27,7 @@ func main() {
 	}
 
 	// Adding block
-	blockchain.AddBlock(65478654785, "eee7e87987eeeee78978ee")
+	blockchain.AddBlock(65478654785, "")
 
 	sender3 := "William"
 	recipient3 := "Jones"
@@ -43,9 +43,18 @@ func main() {
 	// Adding block
 	blockchain.AddBlock(787098700473, "zzzzyuyuiyiouuiyzzzzyuyizyz")
 
+	sender4 := "David"
+	recipient4 := "Hugh"
+	amount4 := 123
+	newBlockIndex4 := blockchain.AddTransaction(sender4, recipient4, amount4)
+
 	fmt.Printf("New block index: %d\n", newBlockIndex)
 	fmt.Printf("New block index: %d\n", newBlockIndex2)
 	fmt.Printf("New block index: %d\n", newBlockIndex3)
+	fmt.Printf("New block index: %d\n", newBlockIndex4)
+
+	// Adding block
+	blockchain.AddBlock(547895765986, "hfukrehfekrfherlkjd")
 
 	// Print blocks
 	fmt.Println("Blocks:")

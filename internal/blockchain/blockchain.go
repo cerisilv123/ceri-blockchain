@@ -1,6 +1,9 @@
 package blockchain
 
 import (
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -19,6 +22,19 @@ func NewBlockchain() *Blockchain {
 	return blockchain
 }
 
+func (b *Blockchain) hash(block Block) string {
+	blockJSON, err := json.Marshal(block)
+	if err != nil {
+		return "" // handle error better
+	}
+
+	hash := sha256.Sum256(blockJSON)
+	hashString := fmt.Sprintf("%x", hash)
+	fmt.Printf("%+v\n", "hash: "+hashString)
+
+	return hashString
+}
+
 func (b *Blockchain) AddTransaction(sender string, recipient string, amount int) int {
 	transaction := Transaction{
 		Sender:    sender,
@@ -33,6 +49,10 @@ func (b *Blockchain) AddTransaction(sender string, recipient string, amount int)
 }
 
 func (b *Blockchain) AddBlock(proof int, previousHash string) Block {
+
+	if previousHash == "" {
+		previousHash = b.hash(b.Chain[len(b.Chain)-1]) // Handle error if this returns nil
+	}
 
 	block := Block{
 		Index:        len(b.Chain) + 1,
