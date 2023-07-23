@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -65,4 +66,25 @@ func (b *Blockchain) AddBlock(proof int, previousHash string) Block {
 
 	b.Chain = append(b.Chain, block)
 	return block
+}
+
+func (b *Blockchain) ProofOfWork(lastProof int) int {
+	// - Find a number p' such that hash(pp') contains leading 4 zeroes, where p is the previous p'
+	// - p is the previous proof, and p' is the new proof
+	var proof int = 0
+
+	for !b.ValidateProof(lastProof, proof) {
+		proof += 1
+	}
+
+	return proof
+}
+
+func (b *Blockchain) ValidateProof(lastProof int, proof int) bool {
+	// Validates the Proof: Does hash(lastProof, proof) contain 5 leading zeroes? returns boolean.
+	var guess string = strconv.Itoa(lastProof) + strconv.Itoa(proof)
+	var guessHash [32]byte = sha256.Sum256([]byte(guess))
+	var guessHashString string = fmt.Sprintf("%x", guessHash)
+
+	return guessHashString[:5] == "00000"
 }

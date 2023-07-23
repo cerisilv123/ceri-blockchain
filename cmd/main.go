@@ -61,4 +61,9 @@ func main() {
 	for _, block := range blockchain.Chain {
 		fmt.Printf("%+v\n", block)
 	}
+
+	// Testing proof of work algorithm
+	lastProof := 12345
+	proof := blockchain.ProofOfWork(lastProof)
+	fmt.Printf("Valid proof: %d\n", proof)
 }
