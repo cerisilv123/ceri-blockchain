@@ -2,10 +2,18 @@ package main
 
 import (
 	"ceri-blockchain/internal/blockchain"
+	"ceri-blockchain/pkg/api"
 	"fmt"
+	"net/http"
+
+	"github.com/google/uuid"
 )
 
 func main() {
+
+	// Unique address for node
+	nodeAddress := uuid.New()
+
 	// Create an instance of the Blockchain struct
 	blockchain := blockchain.NewBlockchain()
 
@@ -66,4 +74,21 @@ func main() {
 	lastProof := 12345
 	proof := blockchain.ProofOfWork(lastProof)
 	fmt.Printf("Valid proof: %d\n", proof)
+
+	// Setting up server with the custom handlers, passing the "bc" instance as an argument
+	http.HandleFunc("/mine", func(w http.ResponseWriter, r *http.Request) {
+		api.MineHandler(w, r, blockchain)
+	})
+
+	http.HandleFunc("/transactions/new", func(w http.ResponseWriter, r *http.Request) {
+		api.CreateTransactionHandler(w, r, blockchain)
+	})
+
+	http.HandleFunc("/chain", func(w http.ResponseWriter, r *http.Request) {
+		api.ReadChainHandler(w, r, blockchain)
+	})
+
+	// Starting server on port 8080
+	fmt.Println("Server listening on http://localhost:8080")
+	http.ListenAndServe(":8080", nil)
 }
