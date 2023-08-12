@@ -25,7 +25,33 @@ func CreateTransactionHandler(w http.ResponseWriter, r *http.Request, bc *blockc
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Fprintf(w, "We'll add a new transaction")
+
+	var transaction blockchain.Transaction
+	err := json.NewDecoder(r.Body).Decode(&transaction)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	index := bc.AddTransaction(transaction.Sender, transaction.Recipient, transaction.Amount)
+
+	response := map[string]interface{}{
+		"message": fmt.Sprintf("Transaction will be added to Block %d", index),
+	}
+
+	// Convert the response map to JSON
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Set content header to JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write the JSON response to the client with HTTP status code 201 (Created)
+	w.WriteHeader(http.StatusCreated)
+	w.Write(jsonResponse)
 }
 
 // Handler for the "/chain/read" route

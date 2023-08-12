@@ -5,14 +5,12 @@ import (
 	"ceri-blockchain/pkg/api"
 	"fmt"
 	"net/http"
-
-	"github.com/google/uuid"
 )
 
 func main() {
 
 	// Unique address for node
-	nodeAddress := uuid.New()
+	//nodeAddress := uuid.New()
 
 	// Create an instance of the Blockchain struct
 	blockchain := blockchain.NewBlockchain()
