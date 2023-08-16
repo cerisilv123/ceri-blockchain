@@ -5,12 +5,17 @@ import (
 	"ceri-blockchain/pkg/api"
 	"fmt"
 	"net/http"
+
+	"github.com/google/uuid"
 )
+
+var NodeAddress uuid.UUID
 
 func main() {
 
 	// Unique address for node
-	//nodeAddress := uuid.New()
+	NodeAddress = uuid.New()
+	NodeAddressString := NodeAddress.String()
 
 	// Create an instance of the Blockchain struct
 	blockchain := blockchain.NewBlockchain()
@@ -75,7 +80,7 @@ func main() {
 
 	// Setting up server with the custom handlers, passing the "bc" instance as an argument
 	http.HandleFunc("/mine", func(w http.ResponseWriter, r *http.Request) {
-		api.MineHandler(w, r, blockchain)
+		api.MineHandler(w, r, blockchain, NodeAddressString)
 	})
 
 	http.HandleFunc("/transactions/new", func(w http.ResponseWriter, r *http.Request) {

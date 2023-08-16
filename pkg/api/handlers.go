@@ -11,12 +11,46 @@ import (
 type blockchainHandler func(w http.ResponseWriter, r *http.Request, bc *blockchain.Blockchain)
 
 // Handler for the "/mine" route (using POST)
-func MineHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.Blockchain) {
+func MineHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.Blockchain, nodeAddress string) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Fprintf(w, "We'll mine a new Block")
+
+	// Getting data from last block in the chain which will link to new block
+	lastBlock := bc.GetLastBlock()
+	lastProof := lastBlock.Proof
+	newProof := bc.ProofOfWork(lastProof)
+
+	// Adding a final transaction to show the end of the block
+	bc.AddTransaction("0", nodeAddress, 1) // Sender(default to 0), recipient & amount
+
+	// Getting previous hash and instantiated new Block with link to previous via hash and proof
+	previousHash := bc.Hash(lastBlock)
+	newBlock := bc.AddBlock(newProof, previousHash)
+
+	// Creating JSON body
+	response := map[string]interface{}{
+		"message":      "New block created in the blockchain.",
+		"index":        newBlock.Index,
+		"previousHash": newBlock.PreviousHash,
+		"proof":        newBlock.Proof,
+		"transactions": newBlock.Transactions,
+	}
+
+	// Convert the response map to JSON
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Set content header to JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write the JSON response to the client with HTTP status code 200 (OK)
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResponse)
 }
 
 // Handler for the "/transactions/new" route

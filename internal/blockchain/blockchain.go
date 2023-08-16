@@ -24,8 +24,14 @@ func NewBlockchain() *Blockchain {
 	return blockchain
 }
 
+// Get last block in the blockchain
+func (b *Blockchain) GetLastBlock() Block {
+	lastBlock := b.Chain[len(b.Chain)-1]
+	return lastBlock
+}
+
 // hash computes the SHA-256 hash of a given block and returns it as a string.
-func (b *Blockchain) hash(block Block) string {
+func (b *Blockchain) Hash(block Block) string {
 	blockJSON, err := json.Marshal(block)
 	if err != nil {
 		return "" // Handle error better in production code.
@@ -57,7 +63,7 @@ func (b *Blockchain) AddTransaction(sender string, recipient string, amount int)
 // If the previous hash is empty, it calculates the hash of the last block in the chain.
 func (b *Blockchain) AddBlock(proof int, previousHash string) Block {
 	if previousHash == "" {
-		previousHash = b.hash(b.Chain[len(b.Chain)-1]) // Handle error if this returns nil in production code.
+		previousHash = b.Hash(b.Chain[len(b.Chain)-1]) // Handle error if this returns nil in production code.
 	}
 
 	block := Block{
