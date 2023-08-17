@@ -39,7 +39,6 @@ func (b *Blockchain) Hash(block Block) string {
 
 	hash := sha256.Sum256(blockJSON)
 	hashString := fmt.Sprintf("%x", hash)
-	fmt.Printf("%+v\n", "hash: "+hashString)
 
 	return hashString
 }
