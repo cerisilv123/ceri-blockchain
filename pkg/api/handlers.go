@@ -117,7 +117,7 @@ func ReadChainHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.Blo
 	w.Write(jsonResponse)
 }
 
-// Hadnler for the "/nodes/register" route
+// Handler for the "/nodes/register" route
 func RegisterNodeHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.Blockchain) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -149,5 +149,41 @@ func RegisterNodeHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.
 
 	// Write the JSON response to the client with HTTP status code 201 (Created)
 	w.WriteHeader(http.StatusCreated)
+	w.Write(jsonResponse)
+}
+
+// Handler for the "/nodes/resolve" route
+func ResolveNodeHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.Blockchain) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	chainSubstituted := bc.ResolveChainConflicts()
+
+	var response map[string]interface{}
+
+	if chainSubstituted {
+		response = map[string]interface{}{
+			"message": "Current chain was replaced by a new longer & Validated chain.",
+		}
+	} else {
+		response = map[string]interface{}{
+			"message": "Chain has not been replaced and is the valid chain.",
+		}
+	}
+
+	// Convert the response map to JSON
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Set content header to JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write the JSON response to the client with HTTP status code 200 (OK)
+	w.WriteHeader(http.StatusOK)
 	w.Write(jsonResponse)
 }

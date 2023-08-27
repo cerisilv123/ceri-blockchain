@@ -4,6 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -39,7 +41,7 @@ func (b *Blockchain) ValidateChain(chain []Block) bool {
 			return false
 		}
 
-		// Checking that proof is valid
+		// Checking that proof is valid (proof is valid when prev and current proofs hashed contain leading 00000)
 		if !b.ValidateProof(prevBlock.Proof, currentBlock.Proof) {
 			return false
 		}
@@ -49,6 +51,63 @@ func (b *Blockchain) ValidateChain(chain []Block) bool {
 	}
 
 	return true
+}
+
+// Consensus algorithm that resolves chain conflicts and shares the longest chain in the network
+func (b *Blockchain) ResolveChainConflicts() bool {
+
+	var newChain []Block
+
+	// Only want to replace with a chain if it is greater in length
+	maxLength := len(b.Chain)
+
+	for i := 0; i < len(b.Nodes); i++ {
+		nodeUrl := b.Nodes[i].URL
+
+		// Make a GET request to get the chain for next node
+		response, err := http.Get(nodeUrl)
+		if err != nil {
+			fmt.Println("Error:", err)
+			// Throw error here
+		}
+		defer response.Body.Close()
+
+		// Read the response body
+		jsonBody, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			fmt.Println("Error reading response:", err)
+			// Throw error here
+		}
+
+		var receivedData struct {
+			Chain  []Block
+			Length int
+			Nodes  []Node
+		}
+
+		// Unmarshal the JSON response into the receivedChain slice
+		err = json.Unmarshal(jsonBody, &receivedData)
+		if err != nil {
+			fmt.Println("Error decoding JSON:", err)
+			// Handle error here
+		}
+
+		length := receivedData.Length
+		chain := receivedData.Chain
+
+		if length > maxLength && b.ValidateChain(chain) {
+			maxLength = length
+			newChain = chain
+		}
+	}
+
+	// Chain of current node is replaced with longer, validated chain.
+	if newChain != nil {
+		b.Chain = newChain
+		return true
+	}
+
+	return false
 }
 
 // Registering a node on the network with URL, IP Address and Location (City)

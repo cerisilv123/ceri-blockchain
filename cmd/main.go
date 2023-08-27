@@ -38,6 +38,10 @@ func main() {
 		api.RegisterNodeHandler(w, r, blockchain)
 	})
 
+	http.HandleFunc("/nodes/resolve", func(w http.ResponseWriter, r *http.Request) {
+		api.ResolveNodeHandler(w, r, blockchain)
+	})
+
 	// Starting server on port 8080
 	fmt.Println("Server listening on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
