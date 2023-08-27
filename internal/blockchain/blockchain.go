@@ -12,6 +12,7 @@ import (
 type Blockchain struct {
 	Chain               []Block       // The chain of blocks.
 	CurrentTransactions []Transaction // Pool of current transactions.
+	Nodes               []Node        // An array of nodes currently running on the network.
 }
 
 // NewBlockchain creates and initializes a new Blockchain with a genesis block.
@@ -22,6 +23,28 @@ func NewBlockchain() *Blockchain {
 	}
 	blockchain.AddBlock(1, "100") // Create the genesis block with default values.
 	return blockchain
+}
+
+// Registering a node on the network with URL, IP Address and Location (City)
+func (b *Blockchain) RegisterNode(url string, ipAddress string, location string) {
+	node := Node{
+		URL:       url,
+		IPAddress: ipAddress,
+		Location:  location,
+	}
+
+	var nodeExists bool = false
+
+	for _, existingNode := range b.Nodes {
+		if existingNode.URL == node.URL && existingNode.IPAddress == node.IPAddress {
+			nodeExists = true
+			break
+		}
+	}
+
+	if !nodeExists {
+		b.Nodes = append(b.Nodes, node)
+	} // Handle exception here
 }
 
 // Get last block in the blockchain

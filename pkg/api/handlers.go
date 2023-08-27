@@ -98,6 +98,7 @@ func ReadChainHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.Blo
 
 	response := map[string]interface{}{
 		"chain":  bc.Chain,
+		"nodes":  bc.Nodes, // Remove this after testing
 		"length": len(bc.Chain),
 	}
 
@@ -113,5 +114,40 @@ func ReadChainHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.Blo
 
 	// Write the JSON response to the client with HTTP status code 200 (OK)
 	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResponse)
+}
+
+// Hadnler for the "/nodes/register" route
+func RegisterNodeHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.Blockchain) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var node blockchain.Node
+	err := json.NewDecoder(r.Body).Decode(&node)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	bc.RegisterNode(node.URL, node.IPAddress, node.Location)
+
+	response := map[string]interface{}{
+		"message": "Node added to the ceri-blockchain network.",
+	}
+
+	// Convert the response map to JSON
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Set content header to JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write the JSON response to the client with HTTP status code 201 (Created)
+	w.WriteHeader(http.StatusCreated)
 	w.Write(jsonResponse)
 }
