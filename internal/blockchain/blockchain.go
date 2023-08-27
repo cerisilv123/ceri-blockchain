@@ -25,6 +25,32 @@ func NewBlockchain() *Blockchain {
 	return blockchain
 }
 
+// Checking wether a chain is a valid chain for consensus mechanism. Checks hashes and proofs.
+func (b *Blockchain) ValidateChain(chain []Block) bool {
+
+	prevBlock := b.Chain[0]
+	currentIndex := 1
+
+	for currentIndex < len(b.Chain) {
+		currentBlock := b.Chain[currentIndex]
+
+		// Checking block hashes are correct and have not been tampered with
+		if currentBlock.PreviousHash != b.Hash(prevBlock) {
+			return false
+		}
+
+		// Checking that proof is valid
+		if !b.ValidateProof(prevBlock.Proof, currentBlock.Proof) {
+			return false
+		}
+
+		prevBlock = currentBlock
+		currentIndex++
+	}
+
+	return true
+}
+
 // Registering a node on the network with URL, IP Address and Location (City)
 func (b *Blockchain) RegisterNode(url string, ipAddress string, location string) {
 	node := Node{
