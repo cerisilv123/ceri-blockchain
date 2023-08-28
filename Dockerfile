@@ -6,7 +6,7 @@ FROM golang:1.19
 WORKDIR /app
 
 # Copy go source code into container
-COPY ..
+COPY . .
 
 # Build Go application and install dependencies (go get)
 RUN go mod download
