@@ -166,10 +166,12 @@ func ResolveNodeHandler(w http.ResponseWriter, r *http.Request, bc *blockchain.B
 	if chainSubstituted {
 		response = map[string]interface{}{
 			"message": "Current chain was replaced by a new longer & Validated chain.",
+			"chain":   bc.Chain,
 		}
 	} else {
 		response = map[string]interface{}{
 			"message": "Chain has not been replaced and is the valid chain.",
+			"chain":   bc.Chain,
 		}
 	}
 

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// Blockchain represents a chain of blocks and a pool of current transactions.
+// Blockchain represents a chain of blocks and a pool of current transactions & nodes on the network.
 type Blockchain struct {
 	Chain               []Block       // The chain of blocks.
 	CurrentTransactions []Transaction // Pool of current transactions.
@@ -27,7 +27,7 @@ func NewBlockchain() *Blockchain {
 	return blockchain
 }
 
-// Checking wether a chain is a valid chain for consensus mechanism. Checks hashes and proofs.
+// Checking whether a chain is a valid chain for consensus mechanism. Checks hashes and proofs.
 func (b *Blockchain) ValidateChain(chain []Block) bool {
 
 	prevBlock := b.Chain[0]
