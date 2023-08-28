@@ -26,6 +26,8 @@ At its core, a blockchain is a decentralized, immutable, and transparent ledger 
    - You can either run the program by building and running the Docker image provided in the repo or by running it using 'go run .'
    - When running the program on to a node you would need to notify other nodes on the network by calling the endpoint /nodes/register (the code could be cloned and this process could be improved!)
 
+## Documentation
+
 ### Models, Services, Handlers & Persistence
 
 In the context of GoLang directory structure, the terms "models," "services," "handlers," and "persistence" are commonly used to categorize different components of an application. Here's a breakdown of their typical roles:
