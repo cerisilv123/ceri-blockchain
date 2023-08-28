@@ -62,7 +62,7 @@ func (b *Blockchain) ResolveChainConflicts() bool {
 	maxLength := len(b.Chain)
 
 	for i := 0; i < len(b.Nodes); i++ {
-		nodeUrl := b.Nodes[i].URL
+		nodeUrl := b.Nodes[i].URL + "/chain"
 
 		// Make a GET request to get the chain for next node
 		response, err := http.Get(nodeUrl)
@@ -85,10 +85,11 @@ func (b *Blockchain) ResolveChainConflicts() bool {
 			Nodes  []Node
 		}
 
-		// Unmarshal the JSON response into the receivedChain slice
+		// Unmarshal the JSON response into the receivedData struct
 		err = json.Unmarshal(jsonBody, &receivedData)
 		if err != nil {
 			fmt.Println("Error decoding JSON:", err)
+			fmt.Println("Response body:", string(jsonBody)) // Print the response body for debugging
 			// Handle error here
 		}
 
