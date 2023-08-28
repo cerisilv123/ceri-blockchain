@@ -15,7 +15,7 @@ RUN go mod download
 FROM scratch
 
 # Copy the binary from the builder stage
-COPY --from=builder /app/my-golang-app /app/my-golang-app
+COPY --from=builder /app/ceri-blockchain /app/ceri-blockchain
 
 # Expose the port your application listens on
 EXPOSE 8080
