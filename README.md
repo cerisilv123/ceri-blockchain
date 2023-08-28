@@ -26,7 +26,7 @@ At its core, a blockchain is a decentralized, immutable, and transparent ledger 
    - You can either run the program by building and running the Docker image provided in the repo or by running it using 'go run .'
    - When running the program on to a node you would need to notify other nodes on the network by calling the endpoint /nodes/register (the code could be cloned and this process could be improved!)
 
-## Documentation
+## Documentation & Notes to myself
 
 ### Models, Services, Handlers & Persistence
 
